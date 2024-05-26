@@ -1,6 +1,3 @@
-</html>
-
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -10,61 +7,88 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="shortcut icon" href="assets/img/logo.png" type="image/x-icon">
-    <title>Introducción a boodstrap</title>
-</head>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
     integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
     crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
 
+    
+    <title>Travesias en el mausoleo Encantado</title>
 
+    <style>
+        .custom-cursor {
+            cursor: none;
+        }
+
+        #custom-cursor {
+            position: fixed;
+            top: -50px; /* Ajusta la posición según sea necesario */
+            left: -50px; /* Ajusta la posición según sea necesario */
+            pointer-events: none;
+            z-index: 9999; /* Ajusta el z-index si es necesario */
+        }
+    </style>
+
+    
+</head>
 
 
 <body style="background-color: #1a1a1a;">
 
-
     <header class="container-fluid flex-row bg-dark text-white d-flex justify-content-center">
-        <img src="assets/img/logo.png" alt="Descripción de la imagen" class="m-2" style="width: 60px; height: auto;">
-        <h1 class="m-2 fw-bold">Travesías en el Mausoleo Encantado</h1>
+        <img src="assets/img/logo.png" alt="Descripción de la imagen" class="m-1" style="width: 60px; height: auto;">
+        <h1 class="m-1 fw-bold">Travesías en el Mausoleo Encantado</h1>
     </header>
     
     <div class="accordion accordion-flush" id="accordionFlushExample">
         <div class="accordion-item">
           <h2 class="accordion-header">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-              Accordion Item #1
+              Instrucciones del Juego
             </button>
           </h2>
           <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
             <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item's accordion body.</div>
           </div>
         </div>
-       
-          <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-            <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
-          </div>
+
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <div id="scoreDisplay" class="m-3" style="color: white;">Score: 0</div>
+            <div id="highestScoreDisplay" class="m-3" style="color: white;"></div>
         </div>
       
-    
-
-    <main class="container d-flex justify-content-center align-items-center flex-column col-md-6">
+    <main class="container d-flex justify-content-center align-items-center flex-column custom-cursor">
+        
       <canvas id="canvas"></canvas>
-      <script src = "js/main.js"></script>
+      <script src="js/main.js"></script>
+      
     </main>
-
-
 
     
     <footer class="container-fluid flex-row bg-primary text-white d-flex justify-content-center">
-        <h1 class="m-1 fw-light" >HTML CSS BOOTSTRAP </h1>
+        <h1 class="m-1 fw-light" >Creadora del juego: Mariana Mendoza Gutierrez</h1>
+        
     </footer>
     
     
-    <img id="circleTexture" src="assets/img/fantasma.png" style="display:none;">
 
+    <div id="custom-cursor"> 
+    <img src="assets/img/personaje.png" alt="Custom Cursor" style="width: 30px; height: auto;">
+    </div>
+
+    <script>
+     document.addEventListener('DOMContentLoaded', function () 
+     {
+       const cursor = document.getElementById('custom-cursor');
+       document.addEventListener('mousemove', function (e)
+        {
+          cursor.style.top = e.clientY + 'px';
+          cursor.style.left = e.clientX + 'px';
+            });
+        });
+    </script> 
 
 </body>
 

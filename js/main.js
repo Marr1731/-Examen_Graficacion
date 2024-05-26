@@ -1,7 +1,6 @@
 const canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
-// Obtiene las dimensiones de la pantalla actual
 const window_height = 610; // Alto del canvas
 const window_width = 1350; // Ancho del canvas
 
@@ -116,6 +115,51 @@ function checkCollisions() {
     }
 }
 
+
+// Función para actualizar el puntaje
+function updateScore() {
+    score++; // Aumenta el puntaje en uno
+    updateScoreDisplay(); // Actualiza el contenido del div con el puntaje
+    updateLocalStorage(); // Actualiza el puntaje en el localStorage
+}
+
+// Función para actualizar el contenido del div con el puntaje
+function updateScoreDisplay() {
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    scoreDisplay.textContent = "Score: " + score;
+}
+
+// Función para actualizar el puntaje en el localStorage
+function updateLocalStorage() {
+    // Guarda el puntaje actual en el localStorage
+    localStorage.setItem("currentScore", score);
+    
+    // Obtiene el puntaje más alto almacenado en el localStorage
+    const highestScore = localStorage.getItem("highestScore");
+    
+    // Compara el puntaje actual con el puntaje más alto y actualiza si es necesario
+    if (!highestScore || score > parseInt(highestScore)) {
+        localStorage.setItem("highestScore", score);
+    }
+}
+
+// Función para cargar el puntaje actual y el puntaje más alto desde el localStorage
+function loadScoresFromLocalStorage() {
+    const currentScore = localStorage.getItem("currentScore");
+    const highestScore = localStorage.getItem("highestScore");
+    
+    // Actualiza el puntaje actual y el puntaje más alto en el display
+    if (currentScore) {
+        score = parseInt(currentScore);
+        updateScoreDisplay();
+    }
+    if (highestScore) {
+        document.getElementById("highestScoreDisplay").textContent = "Highest Score: " + highestScore;
+    }
+}
+
+// Llama a la función para cargar el puntaje actual y el puntaje más alto desde el localStorage
+loadScoresFromLocalStorage();
 // Función para obtener las coordenadas del mouse dentro del canvas
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
@@ -148,18 +192,20 @@ function checkCircleClick() {
             ctx.closePath();
             console.log("Se hizo clic dentro del círculo", circle.text); // Mensaje en la consola
             circles.splice(index, 1); // Elimina el círculo de la matriz de círculos
-            score++; // Aumenta el puntaje
             updateScore(); // Actualiza el puntaje en la pantalla
         }
     });
 }
 
-function updateScore() {
+// Función para dibujar el puntaje en el canvas
+function drawScore() {
     ctx.font = "bold 20px Arial";
     ctx.fillStyle = "white";
-    context.fillText(" X: " + mouseX, 25, 10); // Actualiza el texto con la coordenada X
-    context.fillText(" Y: " + mouseY, 25, 25); // Actualiza el texto con la coordenada Y
+    ctx.fillText("Score: " + score, 10, 30); // Muestra el puntaje en la esquina superior izquierda
 }
+
+// Llama a la función para dibujar el puntaje inicial
+drawScore();
 
 // Llama a la función para actualizar los círculos
 updateCircles();
