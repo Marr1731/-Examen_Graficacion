@@ -14,7 +14,7 @@ canvas.style.backgroundSize = "100% 100%";
 let mouseX = 0;
 let mouseY = 0;
 
-// Variable para almacenar la posición del clic
+// Variable para la posición del clic
 let clickX = 0;
 let clickY = 0;
 
@@ -23,6 +23,12 @@ let isMouseClicked = false;
 
 // Variable para el puntaje
 let score = 0;
+
+// Variable para el puntaje más alto
+let highestScore = 0;
+
+// Variable para el temporizador
+let timeLeft = 60; // 60 segundos
 
 class Circle {
     constructor(x, y, radius, image, speed) {
@@ -75,15 +81,19 @@ image.src = 'assets/img/fantasma.png'; // Ruta de la imagen
 
 let circles = [];
 
-for (let i = 0; i < 10; i++) {
-    let x = Math.random() * window_width; // Coordenada X aleatoria
-    let y = Math.random() * window_height; // Coordenada Y aleatoria
-    let radius = Math.random() * 20 + 30; // Radio aleatorio entre 30 y 50
-    let speed = Math.random() * 2 + 4; // Velocidad aleatoria entre 4 y 6
+// Función para generar los círculos iniciales
+function generateCircles() {
+    for (let i = 0; i < 10; i++) {
+        let x = Math.random() * window_width; // Coordenada X aleatoria
+        let y = Math.random() * window_height; // Coordenada Y aleatoria
+        let radius = Math.random() * 20 + 30; // Radio aleatorio entre 30 y 50
+        let speed = Math.random() * 2 + 4; // Velocidad aleatoria entre 4 y 6
 
-    circles.push(new Circle(x, y, radius, image, speed));
+        circles.push(new Circle(x, y, radius, image, speed));
+    }
 }
 
+// Función para actualizar los círculos
 function updateCircles() {
     requestAnimationFrame(updateCircles);
     ctx.clearRect(0, 0, window_width, window_height);
@@ -91,6 +101,10 @@ function updateCircles() {
         circle.update(ctx);
         checkCollisions(); // Verificar colisiones en cada iteración de actualización
     });
+
+    if (circles.length === 0) {
+        generateCircles();
+    }
 }
 
 function checkCollisions() {
@@ -115,12 +129,47 @@ function checkCollisions() {
     }
 }
 
+// Función para actualizar el temporizador
+function updateTimer() {
+    let startTime = Date.now();
+    let elapsedTime = 0;
+
+    function update() {
+        let currentTime = Date.now();
+        let deltaTime = currentTime - startTime;
+        startTime = currentTime;
+        elapsedTime += deltaTime;
+
+        if (elapsedTime >= 1000) {
+            elapsedTime -= 1000;
+            timeLeft--;
+            if (timeLeft <= 0) {
+                endGame();
+            } else {
+                document.getElementById("timeDisplay").textContent = "Time Left: " + timeLeft + "s";
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    update();
+}
+
+// Función para reiniciar el juego cuando se acabe el tiempo
+function endGame() {
+    alert("Game Over. Your Score: " + score);
+    updateHighScore(); // Actualizar el puntaje más alto
+    score = 0; // Reiniciar el puntaje a cero
+    timeLeft = 60; // Reiniciar el tiempo a 60 segundos
+    circles = [];
+    generateCircles();
+    updateScoreDisplay(); // Actualizar la visualización del puntaje en la pantalla
+}
 
 // Función para actualizar el puntaje
 function updateScore() {
     score++; // Aumenta el puntaje en uno
     updateScoreDisplay(); // Actualiza el contenido del div con el puntaje
-    updateLocalStorage(); // Actualiza el puntaje en el localStorage
 }
 
 // Función para actualizar el contenido del div con el puntaje
@@ -129,43 +178,35 @@ function updateScoreDisplay() {
     scoreDisplay.textContent = "Score: " + score;
 }
 
-// Función para actualizar el puntaje en el localStorage
-function updateLocalStorage() {
-    // Guarda el puntaje actual en el localStorage
-    localStorage.setItem("currentScore", score);
-    
-    // Obtiene el puntaje más alto almacenado en el localStorage
-    const highestScore = localStorage.getItem("highestScore");
-    
-    // Compara el puntaje actual con el puntaje más alto y actualiza si es necesario
-    if (!highestScore || score > parseInt(highestScore)) {
-        localStorage.setItem("highestScore", score);
-    }
+// Función para actualizar el puntaje más alto en el localStorage
+function updateHighScore() {
+    highestScore = Math.max(score, highestScore);
+    localStorage.setItem("highestScore", highestScore);
+    updateHighScoreDisplay();
 }
 
-// Función para cargar el puntaje actual y el puntaje más alto desde el localStorage
-function loadScoresFromLocalStorage() {
-    const currentScore = localStorage.getItem("currentScore");
-    const highestScore = localStorage.getItem("highestScore");
-    
-    // Actualiza el puntaje actual y el puntaje más alto en el display
-    if (currentScore) {
-        score = parseInt(currentScore);
-        updateScoreDisplay();
-    }
-    if (highestScore) {
-        document.getElementById("highestScoreDisplay").textContent = "Highest Score: " + highestScore;
-    }
+// Función para cargar el puntaje más alto desde el localStorage
+function loadHighScoreFromLocalStorage() {
+    highestScore = localStorage.getItem("highestScore") || 0;
+    updateHighScoreDisplay();
 }
 
-// Llama a la función para cargar el puntaje actual y el puntaje más alto desde el localStorage
-loadScoresFromLocalStorage();
-// Función para obtener las coordenadas del mouse dentro del canvas
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    mouseX = evt.clientX - rect.left;
-    mouseY = evt.clientY - rect.top;
+// Función para actualizar el contenido del div con el puntaje más alto
+function updateHighScoreDisplay() {
+    document.getElementById("highestScoreDisplay").textContent = "Highest Score: " + highestScore;
 }
+
+// Llama a la función para cargar el puntaje más alto desde el localStorage
+loadHighScoreFromLocalStorage();
+
+// Llama a la función para actualizar el temporizador
+updateTimer();
+
+// Llama a la función para generar los círculos iniciales
+generateCircles();
+
+// Llama a la función para actualizar los círculos
+updateCircles();
 
 // Manejador de eventos para detectar el movimiento del mouse
 canvas.addEventListener('mousemove', function(evt) {
@@ -180,43 +221,19 @@ canvas.addEventListener('mousedown', function(evt) {
     checkCircleClick(); // Llama a la función para verificar si se hizo clic en un círculo
 });
 
+// Función para obtener las coordenadas del mouse dentro del canvas
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    mouseX = evt.clientX - rect.left;
+    mouseY = evt.clientY - rect.top;
+}
+
 function checkCircleClick() {
     circles.forEach((circle, index) => {
         const distance = getDistance(clickX, clickY, circle.posX, circle.posY);
         if (distance < circle.radius) {
-            circle.color = "purple"; // Cambia el color del borde
-            ctx.fillStyle = "purple"; // Cambia el color de relleno
-            ctx.beginPath();
-            ctx.arc(circle.posX, circle.posY, circle.radius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.closePath();
-            console.log("Se hizo clic dentro del círculo", circle.text); // Mensaje en la consola
             circles.splice(index, 1); // Elimina el círculo de la matriz de círculos
             updateScore(); // Actualiza el puntaje en la pantalla
         }
     });
 }
-
-// Función para dibujar el puntaje en el canvas
-function drawScore() {
-    ctx.font = "bold 20px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText("Score: " + score, 10, 30); // Muestra el puntaje en la esquina superior izquierda
-}
-
-// Llama a la función para dibujar el puntaje inicial
-drawScore();
-
-// Llama a la función para actualizar los círculos
-updateCircles();
-
-
-// Llama a la función para actualizar las coordenadas del mouse en cada frame
-function drawMouseCoordinates() {
-    ctx.save(); // Guarda el estado del contexto
-    updateMouseCoordinates(ctx); // Actualiza las coordenadas del mouse
-    ctx.restore(); // Restaura el estado del contexto
-    requestAnimationFrame(drawMouseCoordinates); // Llama recursivamente a la función
-}
-// Llama a la función para dibujar las coordenadas del mouse
-drawMouseCoordinates();
