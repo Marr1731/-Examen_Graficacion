@@ -157,7 +157,7 @@ function updateTimer() {
 
 // Función para reiniciar el juego cuando se acabe el tiempo
 function endGame() {
-    alert("Game Over. Your Score: " + score);
+    alert("Juego terminado este es tu puntaje: " + score);
     updateHighScore(); // Actualizar el puntaje más alto
     score = 0; // Reiniciar el puntaje a cero
     timeLeft = 60; // Reiniciar el tiempo a 60 segundos
